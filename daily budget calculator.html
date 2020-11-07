@@ -1,0 +1,740 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Budget Calculator</title>
+  <style>
+    *,
+    *:before,
+    *:after {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+
+      margin: 0;
+      padding: 0;
+    }
+
+    .w3-table,
+    .w3-table-all {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      display: table
+    }
+
+    .w3-table-all {
+      border: 1px solid #ccc
+    }
+
+    .w3-bordered tr,
+    .w3-table-all tr {
+      border-bottom: 1px solid #ddd
+    }
+
+    .w3-striped tbody tr:nth-child(even) {
+      background-color: #f1f1f1
+    }
+
+    .w3-table-all tr:nth-child(odd) {
+      background-color: #fff
+    }
+
+    .w3-table-all tr:nth-child(even) {
+      background-color: #f1f1f1
+    }
+
+    .w3-hoverable tbody tr:hover,
+    .w3-ul.w3-hoverable li:hover {
+      background-color: #ccc
+    }
+
+    .w3-centered tr th,
+    .w3-centered tr td {
+      text-align: center
+    }
+
+    .w3-table td,
+    .w3-table th,
+    .w3-table-all td,
+    .w3-table-all th {
+      padding: 8px 8px;
+      display: table-cell;
+      text-align: left;
+      vertical-align: top
+    }
+
+    .w3-table th:first-child,
+    .w3-table td:first-child,
+    .w3-table-all th:first-child,
+    .w3-table-all td:first-child {
+      padding-left: 16px
+    }
+
+    .w3-bordered tr,
+    .w3-table-all tr {
+      border-bottom: 1px solid #ddd
+    }
+
+    .w3-striped tbody tr:nth-child(even) {
+      background-color: #f1f1f1
+    }
+
+    .w3-container,
+    .w3-panel {
+      padding: 0.01em 16px
+    }
+
+    .w3-border-0 {
+      border: 0 !important
+    }
+
+    .w3-border {
+      border: 1px solid #ccc !important
+    }
+
+    .w3-border-top {
+      border-top: 1px solid #ccc !important
+    }
+
+    .w3-border-bottom {
+      border-bottom: 1px solid #ccc !important
+    }
+
+    .w3-border-left {
+      border-left: 1px solid #ccc !important
+    }
+
+    .w3-border-right {
+      border-right: 1px solid #ccc !important
+    }
+
+    .w3-hoverable tbody tr:hover,
+    .w3-ul.w3-hoverable li:hover {
+      background-color: #ccc
+    }
+
+    .w3-centered tr th,
+    .w3-centered tr td {
+      text-align: center
+    }
+
+    .w3-container:after,
+    .w3-container:before,
+    .w3-panel:after,
+    .w3-panel:before,
+    .w3-row:after,
+    .w3-row:before,
+    .w3-row-padding:after,
+    .w3-row-padding:before,
+
+    .w3-panel {
+      margin-top: 16px;
+      margin-bottom: 16px
+    }
+
+    .w3-card-4,
+    .w3-hover-shadow:hover {
+      box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.2), 0 4px 20px 0 rgba(0, 0, 0, 0.19)
+    }
+  </style>
+</head>
+
+<body>
+  <input type="number" id="numberOfAccounts" />
+  <select id="rolePicker"></select>
+  <select id="companySizePicker"></select>
+  <input type="button" id="addRole" value="Add Role" />
+  <div id="rolesViewer" class="w3-container">
+    <table id="rolesViewerTable" class="w3-table w3-striped w3-border w3-bordered w3-hoverable w3-card-4">
+      <thead>
+        <tr>
+          <th colspan="2"></th>
+          <th colspan="4" style="text-align:center;">Without Overlay</th>
+          <th colspan="4" style="text-align:center;">With Overlay</th>
+        </tr>
+        <tr>
+          <th colspan="2"></th>
+          <th style="text-align:center;">Monthly Budget</th>
+          <th style="text-align:center;">Daily Budget</th>
+          <th style="text-align:center;">Monthly Impressions</th>
+          <th style="text-align:center;">Daily Impressions</th>
+          <th style="text-align:center;">Monthly Budget</th>
+          <th style="text-align:center;">Daily Budget</th>
+          <th style="text-align:center;">Monthly Impressions</th>
+          <th style="text-align:center;">Daily Impressions</th>
+        </tr>
+      </thead>
+      <tbody id="rolesViewerTableBody"></tbody>
+    </table>
+  </div>
+  <div id="budgetMatrix" style="visibility: hidden;">
+    "Cusomer Service" 0 999 $1.00 $1.50 $0.25 $0.40
+    "Cusomer Service " 1000 4999 $2.50 $5.00 $0.60 $1.25
+    "Cusomer Service " 5000 9999 $5.00 $10.00 $1.25 $2.50
+    "Cusomer Service " 10000 49999 $10.00 $15.00 $2.50 $3.75
+    "Cusomer Service " 50000 99999 $20.00 $35.00 $5.00 $8.75
+    "Cusomer Service " 100000 499999 $40.00 $65.00 $10.00 $16.25
+    "Cusomer Service " 500000 999999 $185.00 $205.00 $46.25 $51.25
+    "Cusomer Service " 1000000 1500000 $370.00 $395.00 $92.50 $98.75
+    Finance 0 999 $10.00 $15.00 $2.50 $3.75
+    Finance 1000 4999 $20.00 $35.00 $5.00 $8.75
+    Finance 5000 9999 $40.00 $65.00 $10.00 $16.25
+    Finance 10000 49999 $80.00 $95.00 $20.00 $23.75
+    Finance 50000 99999 $110.00 $125.00 $27.50 $31.25
+    Finance 100000 499999 $140.00 $155.00 $35.00 $38.75
+    Finance 500000 999999 $180.00 $195.00 $45.00 $48.75
+    Finance 1000000 1500000 $210.00 $225.00 $52.50 $56.25
+    Finance-Accounting 0 999 $10.00 $15.00 $2.50 $3.75
+    Finance-Accounting 1000 4999 $20.00 $35.00 $5.00 $8.75
+    Finance-Accounting 5000 9999 $40.00 $65.00 $10.00 $16.25
+    Finance-Accounting 10000 49999 $80.00 $95.00 $20.00 $23.75
+    Finance-Accounting 50000 99999 $110.00 $125.00 $27.50 $31.25
+    Finance-Accounting 100000 499999 $140.00 $155.00 $35.00 $38.75
+    Finance-Accounting 500000 999999 $180.00 $195.00 $45.00 $48.75
+    Finance-Accounting 1000000 1500000 $220.00 $225.00 $55.00 $56.25
+    Finance-Corporate 0 999 $5.00 $10.00 $1.25 $2.50
+    Finance-Corporate 1000 4999 $15.00 $25.00 $3.75 $6.25
+    Finance-Corporate 5000 9999 $30.00 $45.00 $7.50 $11.25
+    Finance-Corporate 10000 49999 $60.00 $85.00 $15.00 $21.25
+    Finance-Corporate 50000 99999 $110.00 $125.00 $27.50 $31.25
+    Finance-Corporate 100000 499999 $140.00 $196.00 $35.00 $49.00
+    Finance-Corporate 500000 999999 $180.00 $252.00 $45.00 $63.00
+    Finance-Corporate 1000000 1500000 $210.00 $225.00 $52.50 $56.25
+    Government 0 999 $2.50 $3.50 $0.65 $0.90
+    Government 1000 4999 $5.00 $7.00 $1.25 $1.75
+    Government 5000 9999 $10.00 $14.00 $2.50 $3.50
+    Government 10000 49999 $15.00 $21.00 $3.75 $5.25
+    Government 50000 99999 $20.00 $28.00 $5.00 $7.00
+    Government 100000 499999 $40.00 $56.00 $10.00 $14.00
+    Government 500000 999999 $110.00 $154.00 $27.50 $38.50
+    Government 1000000 1500000 $140.00 $196.00 $35.00 $49.00
+    HR 0 999 $10.00 $14.00 $2.50 $3.50
+    HR 1000 4999 $15.00 $21.00 $3.75 $5.25
+    HR 5000 9999 $30.00 $42.00 $7.50 $10.50
+    HR 10000 49999 $60.00 $84.00 $15.00 $21.00
+    HR 50000 99999 $90.00 $126.00 $22.50 $31.50
+    HR 100000 499999 $120.00 $168.00 $30.00 $42.00
+    HR 500000 999999 $160.00 $224.00 $40.00 $56.00
+    HR 1000000 1500000 $200.00 $280.00 $50.00 $70.00
+    HR-Employee Development 0 999 $5.00 $7.00 $1.25 $1.75
+    HR-Employee Development 1000 4999 $15.00 $21.00 $3.75 $5.25
+    HR-Employee Development 5000 9999 $30.00 $42.00 $7.50 $10.50
+    HR-Employee Development 10000 49999 $60.00 $84.00 $15.00 $21.00
+    HR-Employee Development 50000 99999 $90.00 $126.00 $22.50 $31.50
+    HR-Employee Development 100000 499999 $120.00 $168.00 $30.00 $42.00
+    HR-Employee Development 500000 999999 $140.00 $196.00 $35.00 $49.00
+    HR-Employee Development 1000000 1500000 $180.00 $252.00 $45.00 $63.00
+    IT 0 999 $10.00 $14.00 $2.50 $3.50
+    IT 1000 4999 $15.00 $21.00 $3.75 $5.25
+    IT 5000 9999 $30.00 $42.00 $7.50 $10.50
+    IT 10000 49999 $50.00 $70.00 $12.50 $17.50
+    IT 50000 99999 $80.00 $112.00 $20.00 $28.00
+    IT 100000 499999 $120.00 $168.00 $30.00 $42.00
+    IT 500000 999999 $160.00 $224.00 $40.00 $56.00
+    IT 1000000 1500000 $180.00 $252.00 $45.00 $63.00
+    IT-Operations 0 999 $2.50 $3.50 $0.65 $0.90
+    IT-Operations 1000 4999 $5.00 $7.00 $1.25 $1.75
+    IT-Operations 5000 9999 $10.00 $14.00 $2.50 $3.50
+    IT-Operations 10000 49999 $20.00 $28.00 $5.00 $7.00
+    IT-Operations 50000 99999 $35.00 $49.00 $8.75 $12.25
+    IT-Operations 100000 499999 $60.00 $84.00 $15.00 $21.00
+    IT-Operations 500000 999999 $110.00 $154.00 $27.50 $38.50
+    IT-Operations 1000000 1500000 $140.00 $196.00 $35.00 $49.00
+    IT-Data Analyst 0 999 $2.50 $3.50 $0.65 $0.90
+    IT-Data Analyst 1000 4999 $5.00 $7.00 $1.25 $1.75
+    IT-Data Analyst 5000 9999 $10.00 $14.00 $2.50 $3.50
+    IT-Data Analyst 10000 49999 $20.00 $28.00 $5.00 $7.00
+    IT-Data Analyst 50000 99999 $35.00 $49.00 $8.75 $12.25
+    IT-Data Analyst 100000 499999 $60.00 $84.00 $15.00 $21.00
+    IT-Data Analyst 500000 999999 $110.00 $154.00 $27.50 $38.50
+    IT-Data Analyst 1000000 1500000 $140.00 $196.00 $35.00 $49.00
+    Legal 0 999 $10.00 $14.00 $2.50 $3.50
+    Legal 1000 4999 $20.00 $28.00 $5.00 $7.00
+    Legal 5000 9999 $40.00 $56.00 $10.00 $14.00
+    Legal 10000 49999 $80.00 $112.00 $20.00 $28.00
+    Legal 50000 99999 $120.00 $168.00 $30.00 $42.00
+    Legal 100000 499999 $140.00 $196.00 $35.00 $49.00
+    Legal 500000 999999 $180.00 $252.00 $45.00 $63.00
+    Legal 1000000 1500000 $220.00 $308.00 $55.00 $77.00
+    Marketing 0 999 $5.00 $7.00 $1.25 $1.75
+    Marketing 1000 4999 $10.00 $14.00 $2.50 $3.50
+    Marketing 5000 9999 $25.00 $35.00 $6.25 $8.75
+    Marketing 10000 49999 $40.00 $56.00 $10.00 $14.00
+    Marketing 50000 99999 $80.00 $112.00 $20.00 $28.00
+    Marketing 100000 499999 $110.00 $154.00 $27.50 $38.50
+    Marketing 500000 999999 $140.00 $196.00 $35.00 $49.00
+    Marketing 1000000 1500000 $180.00 $252.00 $45.00 $63.00
+    Medical 0 999 $2.50 $3.50 $0.65 $0.90
+    Medical 1000 4999 $5.00 $7.00 $1.25 $1.75
+    Medical 5000 9999 $10.00 $14.00 $2.50 $3.50
+    Medical 10000 49999 $15.00 $21.00 $3.75 $5.25
+    Medical 50000 99999 $25.00 $35.00 $6.25 $8.75
+    Medical 100000 499999 $40.00 $56.00 $10.00 $14.00
+    Medical 500000 999999 $80.00 $112.00 $20.00 $28.00
+    Medical 1000000 1500000 $110.00 $154.00 $27.50 $38.50
+    Operations 0 999 $5.00 $7.00 $1.25 $1.75
+    Operations 1000 4999 $10.00 $14.00 $2.50 $3.50
+    Operations 5000 9999 $25.00 $35.00 $6.25 $8.75
+    Operations 10000 49999 $40.00 $56.00 $10.00 $14.00
+    Operations 50000 99999 $60.00 $84.00 $15.00 $21.00
+    Operations 100000 499999 $90.00 $126.00 $22.50 $31.50
+    Operations 500000 999999 $110.00 $154.00 $27.50 $38.50
+    Operations 1000000 1500000 $130.00 $182.00 $32.50 $45.50
+    Operations-Logistics 0 999 $2.50 $3.50 $0.65 $0.90
+    Operations-Logistics 1000 4999 $5.00 $7.00 $1.25 $1.75
+    Operations-Logistics 5000 9999 $10.00 $14.00 $2.50 $3.50
+    Operations-Logistics 10000 49999 $15.00 $21.00 $3.75 $5.25
+    Operations-Logistics 50000 99999 $30.00 $42.00 $7.50 $10.50
+    Operations-Logistics 100000 499999 $45.00 $63.00 $11.25 $15.75
+    Operations-Logistics 500000 999999 $60.00 $84.00 $15.00 $21.00
+    Operations-Logistics 1000000 1500000 $80.00 $112.00 $20.00 $28.00
+    Operations-Facilities 0 999 $2.50 $3.50 $0.65 $0.90
+    Operations-Facilities 1000 4999 $5.00 $7.00 $1.25 $1.75
+    Operations-Facilities 5000 9999 $10.00 $14.00 $2.50 $3.50
+    Operations-Facilities 10000 49999 $15.00 $21.00 $3.75 $5.25
+    Operations-Facilities 50000 99999 $30.00 $42.00 $7.50 $10.50
+    Operations-Facilities 100000 499999 $45.00 $63.00 $11.25 $15.75
+    Operations-Facilities 500000 999999 $60.00 $84.00 $15.00 $21.00
+    Operations-Facilities 1000000 1500000 $80.00 $112.00 $20.00 $28.00
+    Operations-Mgmt&Admin 0 999 $5.00 $7.00 $1.25 $1.75
+    Operations-Mgmt&Admin 1000 4999 $10.00 $14.00 $2.50 $3.50
+    Operations-Mgmt&Admin 5000 9999 $25.00 $35.00 $6.25 $8.75
+    Operations-Mgmt&Admin 10000 49999 $40.00 $56.00 $10.00 $14.00
+    Operations-Mgmt&Admin 50000 99999 $60.00 $84.00 $15.00 $21.00
+    Operations-Mgmt&Admin 100000 499999 $90.00 $126.00 $22.50 $31.50
+    Operations-Mgmt&Admin 500000 999999 $110.00 $154.00 $27.50 $38.50
+    Operations-Mgmt&Admin 1000000 1500000 $130.00 $182.00 $32.50 $45.50
+    Operations-Procurement 0 999 $5.00 $7.00 $1.25 $1.75
+    Operations-Procurement 1000 4999 $10.00 $14.00 $2.50 $3.50
+    Operations-Procurement 5000 9999 $25.00 $35.00 $6.25 $8.75
+    Operations-Procurement 10000 49999 $40.00 $56.00 $10.00 $14.00
+    Operations-Procurement 50000 99999 $60.00 $84.00 $15.00 $21.00
+    Operations-Procurement 100000 499999 $90.00 $126.00 $22.50 $31.50
+    Operations-Procurement 500000 999999 $110.00 $154.00 $27.50 $38.50
+    Operations-Procurement 1000000 1500000 $130.00 $182.00 $32.50 $45.50
+    Product 0 999 $10.00 $14.00 $2.50 $3.50
+    Product 1000 4999 $20.00 $28.00 $5.00 $7.00
+    Product 5000 9999 $40.00 $56.00 $10.00 $14.00
+    Product 10000 49999 $80.00 $112.00 $20.00 $28.00
+    Product 50000 99999 $100.00 $140.00 $25.00 $35.00
+    Product 100000 499999 $110.00 $154.00 $27.50 $38.50
+    Product 500000 999999 $120.00 $168.00 $30.00 $42.00
+    Product 1000000 1500000 $140.00 $196.00 $35.00 $49.00
+    Research&Science 0 999 $2.50 $3.50 $0.65 $0.90
+    Research&Science 1000 4999 $5.00 $7.00 $1.25 $1.75
+    Research&Science 5000 9999 $10.00 $14.00 $2.50 $3.50
+    Research&Science 10000 49999 $20.00 $28.00 $5.00 $7.00
+    Research&Science 50000 99999 $40.00 $56.00 $10.00 $14.00
+    Research&Science 100000 499999 $80.00 $112.00 $20.00 $28.00
+    Research&Science 500000 999999 $100.00 $140.00 $25.00 $35.00
+    Research&Science 1000000 1500000 $120.00 $168.00 $30.00 $42.00
+    Sales 0 999 $7.50 $10.50 $1.90 $2.60
+    Sales 1000 4999 $10.00 $14.00 $2.50 $3.50
+    Sales 5000 9999 $20.00 $28.00 $5.00 $7.00
+    Sales 10000 49999 $40.00 $56.00 $10.00 $14.00
+    Sales 50000 99999 $65.00 $91.00 $16.25 $22.75
+    Sales 100000 499999 $80.00 $112.00 $20.00 $28.00
+    Sales 500000 999999 $100.00 $140.00 $25.00 $35.00
+    Sales 1000000 1500000 $120.00 $168.00 $30.00 $42.00
+    C-Suite 0 999 $2.00 $2.80 $0.50 $0.70
+    C-Suite 1000 4999 $5.00 $7.00 $1.25 $1.75
+    C-Suite 5000 9999 $10.00 $14.00 $2.50 $3.50
+    C-Suite 10000 49999 $20.00 $28.00 $5.00 $7.00
+    C-Suite 50000 99999 $30.00 $42.00 $7.50 $10.50
+    C-Suite 100000 499999 $45.00 $63.00 $11.25 $15.75
+    C-Suite 500000 999999 $60.00 $84.00 $15.00 $21.00
+    C-Suite 1000000 1500000 $80.00 $112.00 $20.00 $28.00
+    VP 0 999 $2.00 $2.80 $0.50 $0.70
+    VP 1000 4999 $5.00 $7.00 $1.25 $1.75
+    VP 5000 9999 $10.00 $14.00 $2.50 $3.50
+    VP 10000 49999 $20.00 $28.00 $5.00 $7.00
+    VP 50000 99999 $30.00 $42.00 $7.50 $10.50
+    VP 100000 499999 $45.00 $63.00 $11.25 $15.75
+    VP 500000 999999 $60.00 $84.00 $15.00 $21.00
+    VP 1000000 1500000 $80.00 $112.00 $20.00 $28.00
+    Whole Company 0 999 $5.00 $7.00 $1.25 $1.75
+    Whole Company 1000 4999 $10.00 $14.00 $2.50 $3.50
+    Whole Company 5000 9999 $20.00 $28.00 $5.00 $7.00
+    Whole Company 10000 49999 $40.00 $56.00 $10.00 $14.00
+    Whole Company 50000 99999 $55.00 $77.00 $13.75 $19.25
+    Whole Company 100000 499999 $70.00 $98.00 $17.50 $24.50
+    Whole Company 500000 999999 $85.00 $119.00 $21.25 $29.75
+    Whole Company 1000000 1500000 $100.00 $140.00 $25.00 $35.00
+  </div>
+
+  <script language=javascript>
+    (function () {
+      function budgetCalculator() {
+        var
+          rolesAdded = {},
+          calculations = {},
+          matrix = {},
+          companySizes = {}
+          ;
+
+        load(element("budgetMatrix"));
+        buildRolesPicker();
+        buildEmployeeSizePicker();
+        addListeners();
+
+        function addListeners() {
+          element("addRole").addEventListener("click", function () {
+            addRole();
+            calculateBudgets();
+            buildRolesViewer();
+          });
+        }
+
+        function buildRolesViewer() {
+          var oldTbodyElem = document.getElementById("rolesViewerTableBody");
+          var tbodyElem = document.createElement('tbody');
+          tbodyElem.setAttribute("id", "rolesViewerTableBody");
+          oldTbodyElem.parentNode.replaceChild(tbodyElem, oldTbodyElem);
+
+          let rowElem = document.createElement("tr");
+
+          let elem = document.createElement("td");
+          elem.setAttribute("colspan", 2);
+          elem.style = "text-align:right;"
+          elem.innerText = "Total:"
+          rowElem.appendChild(elem);
+
+          let noOverlayMinTotal = 0;
+          noOverlayMaxTotal = 0;
+          overlayMinTotal = 0;
+          overlayMaxTotal = 0;
+
+          let noOverlayMinTotalImpressions = 0;
+          noOverlayMaxTotalImpressions = 0;
+          overlayMinTotalImpressions = 0;
+          overlayMaxTotalImpressions = 0;
+
+          for (let role in calculations) {
+            let rowElem = document.createElement("tr");
+            rowElem.style = "cursor:pointer;"
+            rowElem.setAttribute("role", role);
+            rowElem.addEventListener("click", function (e) {
+              let cn = e.toElement.parentElement.parentElement.childNodes;
+              let expand = false;
+              for (let i = 0; i < cn.length; i++) {
+                if (e.toElement.parentElement == cn[i]) {
+                  expand = true;
+                  continue;
+                }
+
+                if (expand) {
+                  if (cn[i].getAttribute("role") == e.toElement.parentElement.getAttribute("role")) {
+                    cn[i].style.display = "";
+                  } else {
+                    break;
+                  }
+                }
+              }
+            });
+
+            let roleNameElem = document.createElement("td");
+            roleNameElem.setAttribute("colspan", 2);
+            roleNameElem.innerText = role;
+            rowElem.appendChild(roleNameElem);
+            tbodyElem.appendChild(rowElem);
+
+            let noOverlayMinSubTotal = 0;
+            noOverlayMaxSubTotal = 0;
+            overlayMinSubTotal = 0;
+            overlayMaxSubTotal = 0;
+
+            let noOverlayMinSubTotalImpressions = 0;
+            noOverlayMaxSubTotalImpressions = 0;
+            overlayMinSubTotalImpressions = 0;
+            overlayMaxSubTotalImpressions = 0;
+
+            for (let companySize in calculations[role]) {
+              let noOverlayMin = calculations[role][companySize].noOverlayMin;
+              let noOverlayMax = calculations[role][companySize].noOverlayMax;
+              let overlayMin = calculations[role][companySize].overlayMin;
+              let overlayMax = calculations[role][companySize].overlayMax;
+
+              let noOverlayMinImpressions = calculations[role][companySize].noOverlayMinImpressions;
+              let noOverlayMaxImpressions = calculations[role][companySize].noOverlayMaxImpressions;
+              let overlayMinImpressions = calculations[role][companySize].overlayMinImpressions;
+              let overlayMaxImpressions = calculations[role][companySize].overlayMaxImpressions;
+
+              noOverlayMinSubTotal += noOverlayMin;
+              noOverlayMaxSubTotal += noOverlayMax;
+              overlayMinSubTotal += overlayMin;
+              overlayMaxSubTotal += overlayMax;
+
+              noOverlayMinSubTotalImpressions += noOverlayMinImpressions;
+              noOverlayMaxSubTotalImpressions += noOverlayMaxImpressions;
+              overlayMinSubTotalImpressions += overlayMinImpressions;
+              overlayMaxSubTotalImpressions += overlayMaxImpressions;
+
+              let rowElem = document.createElement("tr");
+              rowElem.style.display = 'none'
+              rowElem.setAttribute("role", role);
+
+              let elem = document.createElement("td");
+              elem.innerText = calculations[role][companySize].numOfAccounts + " accounts";
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.innerText = companySize + " employees";
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatDollars(noOverlayMin), formatDollars(noOverlayMax));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatDollars(noOverlayMin / 30), formatDollars(noOverlayMax / 30));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatInt(noOverlayMinImpressions), formatInt(noOverlayMaxImpressions));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatInt(noOverlayMinImpressions / 30), formatInt(noOverlayMaxImpressions / 30));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatDollars(overlayMin), formatDollars(overlayMax));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatDollars(overlayMin / 30), formatDollars(overlayMax / 30));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatInt(overlayMinImpressions), formatInt(overlayMaxImpressions));
+              rowElem.appendChild(elem);
+
+              elem = document.createElement("td");
+              elem.style = "text-align:center;"
+              elem.innerText = formatRange(formatInt(overlayMinImpressions / 30), formatInt(overlayMaxImpressions / 30));
+              rowElem.appendChild(elem);
+
+              tbodyElem.appendChild(rowElem);
+            }
+
+            noOverlayMinTotal += noOverlayMinSubTotal;
+            noOverlayMaxTotal += noOverlayMaxSubTotal;
+            overlayMinTotal += overlayMinSubTotal;
+            overlayMaxTotal += overlayMaxSubTotal;
+
+            noOverlayMinTotalImpressions += noOverlayMinSubTotalImpressions;
+            noOverlayMaxTotalImpressions += noOverlayMaxSubTotalImpressions;
+            overlayMinTotalImpressions += overlayMinSubTotalImpressions;
+            overlayMaxTotalImpressions += overlayMaxSubTotalImpressions;
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatDollars(noOverlayMinSubTotal), formatDollars(noOverlayMaxSubTotal));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatDollars(noOverlayMinSubTotal / 30), formatDollars(noOverlayMaxSubTotal / 30));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatInt(noOverlayMinSubTotalImpressions), formatInt(noOverlayMaxSubTotalImpressions));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatInt(noOverlayMinSubTotalImpressions / 30), formatInt(noOverlayMaxSubTotalImpressions / 30));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatDollars(overlayMinSubTotal), formatDollars(overlayMaxSubTotal));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatDollars(overlayMinSubTotal / 30), formatDollars(overlayMaxSubTotal / 30));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatInt(overlayMinSubTotalImpressions), formatInt(overlayMaxSubTotalImpressions));
+            rowElem.appendChild(elem);
+
+            elem = document.createElement("td");
+            elem.style = "text-align:center;"
+            elem.innerText = formatRange(formatInt(overlayMinSubTotalImpressions / 30), formatInt(overlayMaxSubTotalImpressions / 30));
+            rowElem.appendChild(elem);
+          }
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatDollars(noOverlayMinTotal), formatDollars(noOverlayMaxTotal));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatDollars(noOverlayMinTotal / 30), formatDollars(noOverlayMaxTotal / 30));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatInt(noOverlayMinTotalImpressions), formatInt(noOverlayMaxTotalImpressions));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatInt(noOverlayMinTotalImpressions / 30), formatInt(noOverlayMaxTotalImpressions / 30));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatDollars(overlayMinTotal), formatDollars(overlayMaxTotal));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatDollars(overlayMinTotal / 30), formatDollars(overlayMaxTotal / 30));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatInt(overlayMinTotalImpressions), formatInt(overlayMaxTotalImpressions));
+          rowElem.appendChild(elem);
+
+          elem = document.createElement("td");
+          elem.style = "text-align:center;"
+          elem.innerText = formatRange(formatInt(overlayMinTotalImpressions / 30), formatInt(overlayMaxTotalImpressions / 30));
+          rowElem.appendChild(elem);
+
+          tbodyElem.appendChild(rowElem);
+        }
+
+        function calculateBudgets() {
+          for (let role in rolesAdded) {
+            let roleInput = rolesAdded[role];
+            calculations[role] = {}
+            for (let k in roleInput) {
+              for (let i = 0; i < matrix[role].length; i++) {
+                let entry = matrix[role][i];
+                if (k == entry.companySizeMin) {
+                  calculations[entry.role][formatRange(entry.companySizeMin, entry.companySizeMax)] = {
+                    roleName: entry.role,
+                    companySize: formatRange(entry.companySizeMin, entry.companySizeMax),
+                    numOfAccounts: roleInput[k],
+                    noOverlayMin: entry.noOverlayMin * roleInput[k],
+                    noOverlayMax: entry.noOverlayMax * roleInput[k],
+                    overlayMin: entry.overlayMin * roleInput[k],
+                    overlayMax: entry.overlayMax * roleInput[k],
+                    noOverlayMinImpressions: entry.noOverlayMin * roleInput[k] * 1000 / 12,
+                    noOverlayMaxImpressions: entry.noOverlayMax * roleInput[k] * 1000 / 12,
+                    overlayMinImpressions: entry.overlayMin * roleInput[k] * 1000 / 12,
+                    overlayMaxImpressions: entry.overlayMax * roleInput[k] * 1000 / 12,
+                  }
+                  break;
+                }
+              }
+            }
+          }
+          console.log(calculations);
+        }
+
+        function formatRange(a, b) {
+          return a + " - " + b;
+        }
+
+        function formatDollars(value) {
+          return "$" + value.toFixed(2);
+        }
+
+        function formatInt(value) {
+          return parseInt(value);
+        }
+
+        function addRole() {
+          if (!(element("rolePicker").value in rolesAdded)) {
+            rolesAdded[element("rolePicker").value] = {};
+          }
+          rolesAdded[element("rolePicker").value][element("companySizePicker").value] = element("numberOfAccounts").value;
+        }
+
+        function buildEmployeeSizePicker() {
+          var picker = document.getElementById("companySizePicker");
+          for (let key in companySizes) {
+            let optionElem = document.createElement("option");
+            optionElem.text = formatRange(key, companySizes[key]);
+            optionElem.value = key;
+            picker.appendChild(optionElem);
+          }
+        }
+
+        function buildRolesPicker() {
+          var picker = document.getElementById("rolePicker");
+          for (let key in matrix) {
+            let optionElem = document.createElement("option");
+            optionElem.text = key;
+            picker.appendChild(optionElem);
+          }
+        }
+
+        function load(matrixEntries) {
+          var entries = matrixEntries.textContent.split("\n");
+          for (let i = 0; i < entries.length; i++) {
+            let entry = entries[i];
+
+            if (entry.replace(/\s/g, "").length == 0) {
+              continue;
+            }
+
+            let parseResults = parseMatrixEntry(entry);
+            if (!(parseResults.role in matrix)) {
+              matrix[parseResults.role] = [];
+            }
+            matrix[parseResults.role].push(parseResults);
+            companySizes[parseResults.companySizeMin] = parseResults.companySizeMax;
+          };
+        }
+
+        function parseMatrixEntry(entry) {
+          var data = entry.replace(/\"/g, "").split(/\s+/);
+          var i = data.length;
+          var results = {
+            overlayMax: data[--i].replace(/\$/, ""),
+            overlayMin: data[--i].replace(/\$/, ""),
+            noOverlayMax: data[--i].replace(/\$/, ""),
+            noOverlayMin: data[--i].replace(/\$/, ""),
+            companySizeMax: data[--i],
+            companySizeMin: data[--i],
+            role: data.slice(1, i).join(" "),
+          };
+          return results;
+        }
+
+        function element(id) {
+          return document.getElementById(id);
+        }
+      } budgetCalculator();
+    }());
+  </script>
+  ​
+</body>
+
+</html>
